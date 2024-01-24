@@ -118,7 +118,7 @@ router.post("/forgotPassword", async (req, resp) => {
     from: process.env.USERID,
     to: existingUser.email,
     subject: "StackOverflow Clone - Account recovery - Reset your password",
-    text: `http://localhost:3000/users/PasswordRecovery/${existingUser._id}/${token}`,
+    text: `https://stackoverflowfrontendproject.netlify.app/users/PasswordRecovery/${existingUser._id}/${token}`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
