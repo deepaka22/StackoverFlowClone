@@ -34,3 +34,27 @@ export const ResetPassword = (id, data) => {
     .collection("usersData")
     .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: data });
 };
+
+// ------------------------------------------ End of Authentication db-------------------------
+
+export const userQuestionsInfo = (id) => {
+  return client
+    .db("stackoverflow")
+    .collection("usersData")
+    .findOne({ _id: new ObjectId(id) });
+};
+
+export const AdduserquestionsInfo = (data) => {
+  return client
+    .db("stackoverflow")
+    .collection("usersQuestions")
+    .insertOne(data);
+};
+
+export const allusersQuesions = (req) => {
+  return client
+    .db("stackoverflow")
+    .collection("usersQuestions")
+    .find(req)
+    .toArray();
+};

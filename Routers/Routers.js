@@ -11,6 +11,9 @@ import {
   generateToken,
   forgetPassword,
   ResetPassword,
+  userQuestionsInfo,
+  AdduserquestionsInfo,
+  allusersQuesions,
 } from "../dbcontrollers/dbControllers.js";
 //-----------------------------imports-----------------------------------
 
@@ -78,7 +81,7 @@ router.post("/login", async (req, resp) => {
     const existingUser = await findUsers(userData.email);
     // if user doesn't exists in db
     if (!existingUser) {
-      resp.status(401).json({ message: "user does not exists" });
+      resp.status(401).json({ message: "User does not exists" });
     }
     // if user exists, validates for password which rec from user, and hashed pass stored in db
     const passValidation = await bcrypt.compare(
@@ -112,7 +115,7 @@ router.post("/forgotPassword", async (req, resp) => {
     // check user is an existing user
     // since email is unique, we check whether user is aldreay in
     const existingUser = await findUsers(userData.email);
-    console.log(existingUser);
+    // console.log(existingUser);
     // if user not found in db
     if (!existingUser) {
       resp.status(400).json({ message: "email id does not exists" });
@@ -179,6 +182,53 @@ router.post("/PasswordRecovery/:id/:token", async (req, resp) => {
     return resp.status(201).json({ message: "password Changed successfully" });
   } catch (error) {
     resp.status(401).json({ message: "internal Error" });
+  }
+});
+
+// ------------------------------------------ Add all questions -------------------------
+
+router.post("/Addquestions", async (req, resp) => {
+  try {
+    const userData = req.body; // data rec from post req from FE
+    // check data was provided
+    console.log(userData, "from userdata");
+
+    if (!userData) {
+      return resp.status(401).json({ message: "no data provided" });
+    }
+    // check user exists in db
+    const existingUser = await userQuestionsInfo(userData.id);
+    console.log(existingUser, "from exist");
+    // if user does not exists in db
+    if (!existingUser) {
+      resp.status(400).json({ message: "user info does not exists" });
+    }
+    //if user exist in db
+    const newUser = await AdduserquestionsInfo(userData);
+    console.log(newUser);
+    return resp.status(200).json({
+      message: "user question information was added successfully !",
+      newUser,
+    });
+  } catch (error) {
+    resp.status(401).json({ message: "internal Error" });
+  }
+});
+
+// ------------------------------------------ Get all questions -------------------------
+
+router.get("/questions", async (req, resp) => {
+  try {
+    const getallUsersQuest = await allusersQuesions({});
+    console.log(getallUsersQuest);
+
+    if (getallUsersQuest.length == 0) {
+      return resp.status(400).json({ message: "No data available" });
+    } else {
+      resp.status(200).json({ data: getallUsersQuest });
+    }
+  } catch (error) {
+    resp.status(401).json({ message: "unable to obtain data" });
   }
 });
 
